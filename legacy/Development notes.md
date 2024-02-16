@@ -7,36 +7,77 @@ They were taken during various stages of the competition, which was my first rea
 
 Additionally parts are in spanish and parts are in english since they were written in different contexts. The titles are in english and were written during the merging of the notes in a single file, to make the file a bit more usable.
 
-
-# Steps to create a robust ml model.
-0. Hacer un EDA de la data, y determinar que hay que hacerle a cada variable.
-1. Leer la data
-2. Crear cross validation train y test sets.
-3. Decidir los siguientes hiperparametros para probar (que podrian incluir data preprocessing hyperparameters)
-
-3. Por cada cross validation set tuple:
-    - Preparar la data de cada cross validation set:
-        - Crear transformador que:
-            - Manejar Variables categoricas (one hot encoding).
-            - Aplicar transformaciones necesarias para que la data tenga distribución normal.
-            - Eliminar outliers?
-            - Normalizar la data
-            - Imputear los missing values numericos. KNN (+ masking?)
-        - fit-transformar train set
-        - transformar test set
-    - Crear y entrenar un modelo, con el train transformado y de tener epocas guardar el numero de epocas ideales.
-    - Calcular su performance con el test transformado.
-4. Promediar las estadisticas de validación y determinar la epoca ideal para el modelo entrenado con todo de ser necesario.
-5. Guardar esos dos datos
-
-5. Preparar el dataset entero:
-   - , posiblemente incluso con las submissions para poder imputear y normalizar y manejar missing values mejor.
-5. Entrenar el modelo 
-6. Con el mejor modelo:
-   - Verificar que funcione con dirty data
-   - Aplicar
-   
-- TODO Meter hyper parameter tuning en esta lista.
+# Steps to solve a data science problem.
+0. Create a repository
+1. Create an exploratory data analysis notebook.
+2. Understand the problem you are trying to solve. Document it in the EDA notebook:
+    - Write the problem that you think needs solving.
+    - Problems are solved to achieve a goal. Identify and write that goal.
+    - Write alternative ways to achieve that goal.
+    - Problems do not exist in a void. Identify elements upstream and downstream of the problem.
+        - Problems can often be solved upstream or downstream(preventing the problem from needing to be solved)
+    - Considering the goal the other entities, and the other possibilities, make sure that the best way to achieve your goal is to solve your problem.
+    - Break the problem into parts and write the general steps needed to solve the problem.
+3. Find data suitable to solve your problem.
+4. Create a data preparation python file.
+5. Create the methods to load the data in the data preparation file.
+6. Load the data with those methods, explore the data in the EDA notebook.
+    - Keep an insights cell at the begining of the notebook summaryzing your findings.
+    - Look at each variable and document what needs to be done. As a general rule, you might want to:
+        - Identify numerical variables.
+        - Identify ordinal categorical variables.
+        - Identify not-ordinal categorical variables.
+        - Identify date variables.
+        - Identify target variables.
+        - Identify image and free text variables or other complex data sources.
+        - Identify all categorical variables requiring additional processing, and what that processing is.
+            - Identify categorical variables that contain multiple info in a single value, and how they should be split into columns.
+        - Identify how to merge data sources
+        - Plot a histogram of value - frequency value for all numerical variables
+        - Analyze correlation with other variables? (value vs other variable valuehistogram?)
+7. Create a TODO and ideas notebook. Document all ideas for data exploration, preparation and ml.
+    - The file should first contain the todo list, in order of what should be done first, with the person that needs to do it.
+        - If multiple people are working on the project, whenever someone begins to work on a todo item they should note on the todo item that they are working on it.
+        - The todo list might to list the reason for each todo.
+    - The file should afterwards contain ideas
+        - First there should be a section per ml pipeline part.
+        - Then there should be numerated idea subsections (so they can be easily referenced)
+        - Each idea as a header cell + a body cell, so they can easily be collapsed but detail can be added.
+8. Create the methods to create a ml pipeline from parameters in the python file.
+    - create cross validation train and test sets. For each cross_validation set process the data
+    - You'll need to allow the data pipeline to be fit with training data, and then be returned to transform the training, validation and prediction data.  You might wanna save the ideal epochs for each model, as well as their performance with their test set and then average their statistics and the epoch to use for training.
+    - For data preparation you migth want to :            
+    - Process numerical variables
+        - Identify and handle outliers.
+        - Normalize the variables (bring them to a -1 or 0 to 1 range)
+        - Identify its distribution, and create a value frequency histogram
+        - Transform its distribution so its normal if reasonable
+        - Impute missing values KNN (+ masking?)
+    - Process any categorical variables containing multiple informations together.
+        - Split them into two variables.
+    - Process ordinal categorical variables
+        - Vectorize them
+        - Impute missing values
+        - Add a column for present - missing values (except you use masking)
+    - Process non-ordinal categorical variables
+        - One hot encode them. Make sure to have an encoding for unknown values, you could have one for missing values, but its probably pointless since you can have 0 for all as missing.
+    - Process text, images or other complex data sources.
+        - Ignore them or create a machine learning pipeline for their processing, and use the results as input for the main model.
+    - all variables that cannot be used in a standard manner should probably be passed as pipeline elements to be added to the pipeline.
+9. Create and test suitable pipelines. Probably one per notebook, so the results of each run are recorded.
+10. Hyperparameter tune the pipeline
+    - for each hyperparameter combination:
+        - for each cross validation tuple, create the model , prepare the data, save the score as described above.
+    - The model parameters be saved along with the results during tuning.
+11. Create boosts or at least bags for each non boosted model, and ensembles, specially of models that learn differently. Might want to consider the level of correlation of the results.
+12. Prepare the final model:
+    - Consider the score of the model the average score of the validation of each fold.
+    - Prepare all the data and train the model with all the data, to have the best imputation normalization and model for predictions.
+    - Save the model file, and the data pipeline if its even possible.
+13. Use the final model:
+    - Load the model and pipelien from file if possible. Prepare the data to predict and predict using the models.
+    - If its impossible to load the pipeline it really shouldnt be the problem as long as you save the pipeline weights and can load them.
+    - Might want to make sure the model can work with dirty data by creating a dataset with dirty data and testing it.
 
 
 ## This is the criteria that should be used to prepare each variable
